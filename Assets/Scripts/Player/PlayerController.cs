@@ -1,12 +1,15 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using static UnityEngine.GraphicsBuffer;
 
 namespace FeatheredFugitive
 {
+    [RequireComponent(typeof(Rigidbody))]
     public class PlayerController : MonoBehaviour
     {
         [SerializeField] private Transform _cameraTransform;
@@ -15,18 +18,20 @@ namespace FeatheredFugitive
         [SerializeField] private float _minPitch = -30f;
         [SerializeField] private float _maxPitch = 60f;
         [SerializeField] private float _speed = 2f;
-        [SerializeField] private float _jumpForce = 120f;
+        [SerializeField] private float _jumpForce = 4f;
         [SerializeField] private bool _debugEnabled;
 
         private PlayerInput _playerInput;
         private float _currentCameraYaw;
         private float _currentCameraPitch;
         private Vector2 _moveInput;
+        private Rigidbody _rigidbody;
 
         private void Awake()
         {
             _playerInput = GetComponent<PlayerInput>();
-            
+            _rigidbody = GetComponent<Rigidbody>();
+
             _playerInput.OnPlayerMoveCamera += OnPlayerMoveCamera;
             _playerInput.OnPlayerMove += OnPlayerMove;
             _playerInput.OnPlayerJump += OnPlayerJump;
@@ -102,19 +107,24 @@ namespace FeatheredFugitive
         {
             if (value > 0) // Check if the jump key is pressed
             {
-                Vector3 move = new Vector3(0, _jumpForce, 0) * Time.deltaTime;
-                transform.Translate(move, Space.World);
+                //Vector3 move = new Vector3(0, _jumpForce, 0) * Time.deltaTime;
+                //transform.Translate(move, Space.World);
+
+                _rigidbody.AddForce(new Vector3(0, _jumpForce, 0), ForceMode.VelocityChange);
             }
         }
 
         /* 
-         * Destroy the coin when the player get in contact with it
+         * Return to the pool the coin when the player get in contact with it
          */
         private void OnTriggerEnter(Collider other)
-        {
-            if(other.transform.tag == "Token")
+        {       
+
+            if (other.transform.tag == "Token")
             {
-                Destroy(other.gameObject);
+                GameObject tokenGameObject = other.gameObject;
+                var token = tokenGameObject.GetComponent<Token>();
+                TokenManager.Instance.ReturnToPool(token);
             }
         }
 
