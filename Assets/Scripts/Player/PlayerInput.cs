@@ -12,6 +12,7 @@ namespace FeatheredFugitive
     {
         public Action<Vector2> OnPlayerMoveCamera;
         public Action<Vector2> OnPlayerMove;
+        public Action<Vector2> OnPlayerJump;
 
         private Input _input;
 
@@ -30,7 +31,7 @@ namespace FeatheredFugitive
 
         public void OnJump(InputAction.CallbackContext context)
         {
-            throw new System.NotImplementedException();
+            OnPlayerJump?.Invoke(context.ReadValue<Vector2>());
         }
 
         public void OnMoveCamera(InputAction.CallbackContext context)
@@ -42,7 +43,6 @@ namespace FeatheredFugitive
         {
             OnPlayerMove?.Invoke(context.ReadValue<Vector2>());
         }
-
         
     }
 }
