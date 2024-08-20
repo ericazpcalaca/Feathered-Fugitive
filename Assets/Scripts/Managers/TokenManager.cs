@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace FeatheredFugitive
 {
-    public class TokenManager : MonoBehaviour
+    public class TokenManager : Singleton<TokenManager>
     {
         // Start is called before the first frame update
         void Start()

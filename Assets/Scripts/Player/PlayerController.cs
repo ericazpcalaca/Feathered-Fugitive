@@ -15,7 +15,7 @@ namespace FeatheredFugitive
         [SerializeField] private float _minPitch = -30f;
         [SerializeField] private float _maxPitch = 60f;
         [SerializeField] private float _speed = 2f;
-        [SerializeField] private float _jumpForce = 15f;
+        [SerializeField] private float _jumpForce = 120f;
         [SerializeField] private bool _debugEnabled;
 
         private PlayerInput _playerInput;
@@ -26,7 +26,7 @@ namespace FeatheredFugitive
         private void Awake()
         {
             _playerInput = GetComponent<PlayerInput>();
-
+            
             _playerInput.OnPlayerMoveCamera += OnPlayerMoveCamera;
             _playerInput.OnPlayerMove += OnPlayerMove;
             _playerInput.OnPlayerJump += OnPlayerJump;
@@ -98,10 +98,24 @@ namespace FeatheredFugitive
             _cameraTransform.LookAt(transform.position + Vector3.up * 1.5f);  
         }
 
-        private void OnPlayerJump(Vector2 vector)
+        private void OnPlayerJump(float value)
         {
-            Vector3 move = new Vector3(_moveInput.x, 15, _moveInput.y) * _jumpForce * Time.deltaTime;
-            transform.Translate(move, Space.World);
+            if (value > 0) // Check if the jump key is pressed
+            {
+                Vector3 move = new Vector3(0, _jumpForce, 0) * Time.deltaTime;
+                transform.Translate(move, Space.World);
+            }
+        }
+
+        /* 
+         * Destroy the coin when the player get in contact with it
+         */
+        private void OnTriggerEnter(Collider other)
+        {
+            if(other.transform.tag == "Token")
+            {
+                Destroy(other.gameObject);
+            }
         }
 
     }
