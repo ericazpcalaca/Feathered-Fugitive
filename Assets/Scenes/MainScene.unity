@@ -818,7 +818,7 @@ MonoBehaviour:
   _minRotDelta: 0.3
   _minPitch: 0
   _maxPitch: 0
-  _speed: 15
+  _speed: 25
   _jumpForce: 4
   _debugEnabled: 0
 --- !u!54 &209241037
@@ -6583,7 +6583,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf558efca181e7341a4dee0ea7fd32b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _movementType: 2
+  _movementType: 0
   _speed: 4
 --- !u!1 &2035529160
 GameObject:

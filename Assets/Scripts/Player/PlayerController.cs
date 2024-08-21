@@ -66,8 +66,8 @@ namespace FeatheredFugitive
                 _currentCameraPitch = Mathf.Clamp(_currentCameraPitch, _minPitch, _maxPitch);
             }
 
-            if (_debugEnabled)
-                Debug.Log($"Current pitch {_currentCameraPitch} Current yaw: {_currentCameraYaw}");
+            //if (_debugEnabled)
+            //    Debug.Log($"Current pitch {_currentCameraPitch} Current yaw: {_currentCameraYaw}");
         }
 
         private void OnPlayerMove(Vector2 vector)
@@ -77,9 +77,29 @@ namespace FeatheredFugitive
 
         private void MovePlayer()
         {
-            Vector3 move = new Vector3(_moveInput.x, 0, _moveInput.y) * _speed * Time.deltaTime;
-            transform.Translate(move, Space.World);
+            // Get the camera's forward and right directions
+            Vector3 cameraForward = _cameraTransform.forward;
+            Vector3 cameraRight = _cameraTransform.right;
+
+            // Flatten the vectors on the XZ plane to avoid tilting the movement
+            cameraForward.y = 0;
+            cameraRight.y = 0;
+
+            cameraForward.Normalize();
+            cameraRight.Normalize();
+
+            // Convert the input to world space using the camera's orientation
+            Vector3 moveDirection = (cameraForward * _moveInput.y + cameraRight * _moveInput.x);
+
+            // Optional: Multiply by a factor to increase speed if needed
+            float speedMultiplier = 1.0f; // Adjust this value to your preference
+
+            // Move the player
+            Vector3 move = moveDirection * _speed * speedMultiplier * Time.deltaTime;
+            _rigidbody.MovePosition(transform.position + move);
         }
+
+
 
         /*
          * Rotate the player to face the direction of movement
@@ -109,9 +129,6 @@ namespace FeatheredFugitive
         {
             if (value > 0) // Check if the jump key is pressed
             {
-                //Vector3 move = new Vector3(0, _jumpForce, 0) * Time.deltaTime;
-                //transform.Translate(move, Space.World);
-
                 _rigidbody.AddForce(new Vector3(0, _jumpForce, 0), ForceMode.VelocityChange);
             }
         }
@@ -127,8 +144,9 @@ namespace FeatheredFugitive
                 GameObject tokenGameObject = other.gameObject;
                 var token = tokenGameObject.GetComponent<Token>();
                 TokenManager.Instance.ReturnToPool(token);
-                
-                //Debug.Log("Player Score: " + _playerTokenScore);
+
+                if (_debugEnabled)
+                    Debug.Log("Player Score: " + _playerTokenScore);
             }
 
             /* 
@@ -151,7 +169,8 @@ namespace FeatheredFugitive
                 else
                 {
                     // Player did not collide with the top of the enemy
-                    Debug.Log("Less one life");
+                    if (_debugEnabled)
+                        Debug.Log("Less one life");
                 }
             }
         }
