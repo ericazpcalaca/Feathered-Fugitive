@@ -22,15 +22,17 @@ namespace FeatheredFugitive
         [SerializeField] private bool _debugEnabled;
 
         private PlayerInput _playerInput;
+        private Rigidbody _rigidbody;
+        private Vector2 _moveInput;
         private float _currentCameraYaw;
         private float _currentCameraPitch;
-        private Vector2 _moveInput;
-        private Rigidbody _rigidbody;
+        private uint _playerTokenScore;
 
         private void Awake()
         {
             _playerInput = GetComponent<PlayerInput>();
             _rigidbody = GetComponent<Rigidbody>();
+            _playerTokenScore = 0;
 
             _playerInput.OnPlayerMoveCamera += OnPlayerMoveCamera;
             _playerInput.OnPlayerMove += OnPlayerMove;
@@ -119,13 +121,16 @@ namespace FeatheredFugitive
          */
         private void OnTriggerEnter(Collider other)
         {       
-
             if (other.transform.tag == "Token")
             {
+                _playerTokenScore++;
                 GameObject tokenGameObject = other.gameObject;
                 var token = tokenGameObject.GetComponent<Token>();
                 TokenManager.Instance.ReturnToPool(token);
+                
+                //Debug.Log("Player Score: " + _playerTokenScore);
             }
+
         }
 
     }
