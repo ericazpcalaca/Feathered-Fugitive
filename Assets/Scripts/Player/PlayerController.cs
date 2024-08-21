@@ -115,12 +115,12 @@ namespace FeatheredFugitive
                 _rigidbody.AddForce(new Vector3(0, _jumpForce, 0), ForceMode.VelocityChange);
             }
         }
-
-        /* 
-         * Return to the pool the coin when the player get in contact with it
-         */
+        
         private void OnTriggerEnter(Collider other)
-        {       
+        {   
+            /* 
+            * Return to the pool the coin when the player get in contact with it
+            */
             if (other.transform.tag == "Token")
             {
                 _playerTokenScore++;
@@ -131,6 +131,29 @@ namespace FeatheredFugitive
                 //Debug.Log("Player Score: " + _playerTokenScore);
             }
 
+            /* 
+            * In colision with the enemy, check if you were able to detroy it
+            */
+            if (other.transform.tag == "Enemy")
+            {
+                GameObject enemyGameObject = other.gameObject;
+                var enemy = enemyGameObject.GetComponent<Enemy>();
+
+                // Check if the player collided with the top of the enemy
+                float playerHeight = transform.position.y;
+                float enemyTopHeight = other.bounds.max.y; 
+
+                if (playerHeight > enemyTopHeight)
+                {
+                    // Player collided with the top of the enemy
+                    Destroy(enemyGameObject);
+                }
+                else
+                {
+                    // Player did not collide with the top of the enemy
+                    Debug.Log("Less one life");
+                }
+            }
         }
 
     }
