@@ -31,7 +31,7 @@ namespace FeatheredFugitive
             ""actions"": [
                 {
                     ""name"": ""MoveCamera"",
-                    ""type"": ""Value"",
+                    ""type"": ""PassThrough"",
                     ""id"": ""141c4d97-9b93-47c8-a214-1ab7d71dde04"",
                     ""expectedControlType"": ""Vector2"",
                     ""processors"": """",
@@ -81,7 +81,7 @@ namespace FeatheredFugitive
                     ""isPartOfComposite"": false
                 },
                 {
-                    ""name"": ""2D Vector"",
+                    ""name"": ""WASD"",
                     ""id"": ""b2037901-98bd-4f95-a4a0-d315f5cf0c67"",
                     ""path"": ""2DVector"",
                     ""interactions"": """",
