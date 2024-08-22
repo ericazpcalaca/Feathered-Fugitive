@@ -8,65 +8,78 @@ namespace FeatheredFugitive
     [RequireComponent(typeof(CharacterController))]
     public class PlayerController : MonoBehaviour
     {
-        [SerializeField] private InputActionReference movementControl;
-        [SerializeField] private InputActionReference jumpControl;
-        [SerializeField] private float playerSpeed = 2.0f;
-        [SerializeField] private float jumpHeight = 1.0f;
-        [SerializeField] private float gravityValue = -9.81f;
-        [SerializeField] private float rotationSpeed = 4f;
+        [SerializeField] private float _jumpHeight = 1.0f;
+        [SerializeField] private float _gravityValue = -9.81f;
+        [SerializeField] private float _rotationSpeed = 1f;
+        [SerializeField] private float _playerSpeed = 2f;
+        [SerializeField] private bool _debugEnabled;
 
-        private CharacterController controller;
-        private Vector3 playerVelocity;
-        private bool groundedPlayer;
-        private Transform cameraMainTransform;
+        private CharacterController _controller;
+        private Transform _cameraMainTransform;
+        private PlayerInput _playerInput;
+        private Vector3 _playerVelocity;
+        private Vector2 _moveInput;
+        private bool _groundedPlayer;
+        private uint _playerTokenScore;
 
-        private void OnEnable()
+        private void Awake()
         {
-            movementControl.action.Enable();
-            jumpControl.action.Enable();
+            _controller = gameObject.GetComponent<CharacterController>();
+            _cameraMainTransform = Camera.main.transform;
+            _playerInput = GetComponent<PlayerInput>();
+            _playerTokenScore = 0;
+
+            _playerInput.OnPlayerMove += OnPlayerMove;
+            _playerInput.OnPlayerJump += OnPlayerJump;
         }
 
-        private void OnDisable()
+        private void OnDestroy()
         {
-            movementControl.action.Disable();
-            jumpControl.action.Disable();
-        }
-
-        private void Start()
-        {
-            controller = gameObject.GetComponent<CharacterController>();
-            cameraMainTransform = Camera.main.transform;
+            _playerInput.OnPlayerMove -= OnPlayerMove;
+            _playerInput.OnPlayerJump -= OnPlayerJump;
         }
 
         void Update()
         {
-            groundedPlayer = controller.isGrounded;
-            if (groundedPlayer && playerVelocity.y < 0)
+            MovePlayer();
+        }
+        private void OnPlayerMove(Vector2 vector)
+        {
+            _moveInput = vector;
+        }
+
+        private void OnPlayerJump(float value)
+        {
+            if (value > 0 && _groundedPlayer) 
             {
-                playerVelocity.y = 0f;
+                _playerVelocity.y += Mathf.Sqrt(_jumpHeight * -2f * _gravityValue);
+            }
+        }
+
+        private void MovePlayer()
+        {
+            _groundedPlayer = _controller.isGrounded;
+            if (_groundedPlayer && _playerVelocity.y < 0)
+            {
+                _playerVelocity.y = 0f;
             }
 
-            Vector2 movement = movementControl.action.ReadValue<Vector2>();
-            Vector3 move = new Vector3(movement.x, 0, movement.y);
-            move = cameraMainTransform.forward * move.z + cameraMainTransform.right * move.x;
-            move.y = 0f;
-            controller.Move(move * Time.deltaTime * playerSpeed);
+            Vector3 moveNewDirection = new Vector3(_moveInput.x, 0, _moveInput.y);
+            moveNewDirection = _cameraMainTransform.forward * moveNewDirection.z + _cameraMainTransform.right * moveNewDirection.x;
+            moveNewDirection.y = 0f;
 
-            // Changes the height position of the player..
-            if (jumpControl.action.triggered && groundedPlayer)
+            _controller.Move(moveNewDirection * Time.deltaTime * _playerSpeed);
+
+            if (_moveInput != Vector2.zero)
             {
-                playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravityValue);
-            }
-
-            playerVelocity.y += gravityValue * Time.deltaTime;
-            controller.Move(playerVelocity * Time.deltaTime);
-
-            if (movement != Vector2.zero)
-            {
-                float targetAngle = Mathf.Atan2(movement.x, movement.y) * Mathf.Rad2Deg + cameraMainTransform.eulerAngles.y;
+                float targetAngle = Mathf.Atan2(_moveInput.x, _moveInput.y) * Mathf.Rad2Deg + _cameraMainTransform.eulerAngles.y;
                 Quaternion rotation = Quaternion.Euler(0f, targetAngle, 0f);
-                transform.rotation = Quaternion.Lerp(transform.rotation, rotation, Time.deltaTime * rotationSpeed);
+                transform.rotation = Quaternion.Lerp(transform.rotation, rotation, Time.deltaTime * _rotationSpeed);
             }
+
+            // Apply gravity
+            _playerVelocity.y += _gravityValue * Time.deltaTime;
+            _controller.Move(_playerVelocity * Time.deltaTime);
         }
 
     }
