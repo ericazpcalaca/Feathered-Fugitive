@@ -31,6 +31,7 @@ namespace FeatheredFugitive
 
             _playerInput.OnPlayerMove += OnPlayerMove;
             _playerInput.OnPlayerJump += OnPlayerJump;
+
         }
 
         private void OnDestroy()
@@ -42,7 +43,59 @@ namespace FeatheredFugitive
         void Update()
         {
             MovePlayer();
+            float playerHeight = transform.position.y;
         }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            /* 
+            * Return to the pool the coin when the player get in contact with it
+            */
+            if (other.transform.tag == "Token")
+            {
+                _playerTokenScore++;
+                GameObject tokenGameObject = other.gameObject;
+                var token = tokenGameObject.GetComponent<Token>();
+                TokenManager.Instance.ReturnToPool(token);
+
+                if (_debugEnabled)
+                    Debug.Log("Player Score: " + _playerTokenScore);
+            }
+
+            /* 
+            * In colision with the enemy, check if you were able to detroy it
+            */
+            if (other.transform.tag == "Enemy")
+            {
+                GameObject enemyGameObject = other.gameObject;
+                var enemy = enemyGameObject.GetComponent<Enemy>();
+
+                // Check if the player collided with the top of the enemy
+                float playerHeight = transform.position.y;
+                float enemyTopHeight = other.bounds.max.y;
+
+                if (_debugEnabled)
+                {
+                    Debug.Log("Player Height: " + playerHeight);
+                    Debug.Log("Enemy Top Height: " + enemyTopHeight);
+                }
+
+
+                if (playerHeight > enemyTopHeight )
+                {
+                    // Player collided with the top of the enemy
+                    Destroy(enemyGameObject);
+                    Debug.Log("entro");
+                }
+                else
+                {
+                    // Player did not collide with the top of the enemy
+                    if (_debugEnabled)
+                        Debug.Log("Less one life");
+                }
+            }
+        }
+
         private void OnPlayerMove(Vector2 vector)
         {
             _moveInput = vector;
@@ -50,9 +103,12 @@ namespace FeatheredFugitive
 
         private void OnPlayerJump(float value)
         {
-            if (value > 0 && _groundedPlayer) 
+            if (value > 0 && _groundedPlayer)
             {
+
                 _playerVelocity.y += Mathf.Sqrt(_jumpHeight * -2f * _gravityValue);
+                if (_debugEnabled)
+                    Debug.Log("Player Height jump: " + transform.position.y);
             }
         }
 
@@ -78,7 +134,9 @@ namespace FeatheredFugitive
             }
 
             // Apply gravity
-            _playerVelocity.y += _gravityValue * Time.deltaTime;
+            float fallMultiplier = 2.0f;
+            float newYVelocity = _playerVelocity.y + (_gravityValue * fallMultiplier * Time.deltaTime);
+            _playerVelocity.y = newYVelocity;
             _controller.Move(_playerVelocity * Time.deltaTime);
         }
 

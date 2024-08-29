@@ -57,7 +57,7 @@ namespace FeatheredFugitive
 
         private void FollowPlayer()
         {
-            Debug.Log("Create the follow player latter");
+            //Debug.Log("Create the follow player latter");
         }
 
     }
