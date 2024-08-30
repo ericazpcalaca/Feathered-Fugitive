@@ -25,13 +25,12 @@ namespace FeatheredFugitive
         private void Awake()
         {
             _controller = gameObject.GetComponent<CharacterController>();
-            _cameraMainTransform = Camera.main.transform;
             _playerInput = GetComponent<PlayerInput>();
+            _cameraMainTransform = Camera.main.transform;
             _playerTokenScore = 0;
 
             _playerInput.OnPlayerMove += OnPlayerMove;
             _playerInput.OnPlayerJump += OnPlayerJump;
-
         }
 
         private void OnDestroy()
@@ -40,10 +39,9 @@ namespace FeatheredFugitive
             _playerInput.OnPlayerJump -= OnPlayerJump;
         }
 
-        void Update()
+        private void Update()
         {
             MovePlayer();
-            float playerHeight = transform.position.y;
         }
 
         private void OnTriggerEnter(Collider other)
@@ -56,11 +54,15 @@ namespace FeatheredFugitive
                 _playerTokenScore++;
                 GameObject tokenGameObject = other.gameObject;
                 var token = tokenGameObject.GetComponent<Token>();
+                
                 TokenManager.Instance.ReturnToPool(token);
                 InventoryManager.Instance.AddItem("Moedinha", 1);
-                InventoryManager.Instance.DisplayInventory();
+
                 if (_debugEnabled)
+                {
+                    InventoryManager.Instance.DisplayInventory();
                     Debug.Log("Player Score: " + _playerTokenScore);
+                }
             }
 
             /* 
@@ -85,7 +87,8 @@ namespace FeatheredFugitive
                 {
                     // Player collided with the top of the enemy
                     Destroy(enemyGameObject);
-                    Debug.Log("entro");
+                    if (_debugEnabled)
+                        Debug.Log("Destroyed");
                 }
                 else
                 {
@@ -139,6 +142,5 @@ namespace FeatheredFugitive
             _playerVelocity.y = newYVelocity;
             _controller.Move(_playerVelocity * Time.deltaTime);
         }
-
     }
 }

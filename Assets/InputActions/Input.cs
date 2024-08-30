@@ -55,6 +55,15 @@ namespace FeatheredFugitive
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""OpenInventory"",
+                    ""type"": ""Button"",
+                    ""id"": ""123cd129-bf8a-4c24-ac82-26d242163823"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -134,6 +143,17 @@ namespace FeatheredFugitive
                     ""action"": ""MovePlayer"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""0092ae44-da25-4fa5-9171-c6dfa43f2447"",
+                    ""path"": ""<Keyboard>/i"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""OpenInventory"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -206,6 +226,7 @@ namespace FeatheredFugitive
             m_Player_MoveCamera = m_Player.FindAction("MoveCamera", throwIfNotFound: true);
             m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
             m_Player_MovePlayer = m_Player.FindAction("MovePlayer", throwIfNotFound: true);
+            m_Player_OpenInventory = m_Player.FindAction("OpenInventory", throwIfNotFound: true);
         }
 
         public void Dispose()
@@ -270,6 +291,7 @@ namespace FeatheredFugitive
         private readonly InputAction m_Player_MoveCamera;
         private readonly InputAction m_Player_Jump;
         private readonly InputAction m_Player_MovePlayer;
+        private readonly InputAction m_Player_OpenInventory;
         public struct PlayerActions
         {
             private @Input m_Wrapper;
@@ -277,6 +299,7 @@ namespace FeatheredFugitive
             public InputAction @MoveCamera => m_Wrapper.m_Player_MoveCamera;
             public InputAction @Jump => m_Wrapper.m_Player_Jump;
             public InputAction @MovePlayer => m_Wrapper.m_Player_MovePlayer;
+            public InputAction @OpenInventory => m_Wrapper.m_Player_OpenInventory;
             public InputActionMap Get() { return m_Wrapper.m_Player; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -295,6 +318,9 @@ namespace FeatheredFugitive
                 @MovePlayer.started += instance.OnMovePlayer;
                 @MovePlayer.performed += instance.OnMovePlayer;
                 @MovePlayer.canceled += instance.OnMovePlayer;
+                @OpenInventory.started += instance.OnOpenInventory;
+                @OpenInventory.performed += instance.OnOpenInventory;
+                @OpenInventory.canceled += instance.OnOpenInventory;
             }
 
             private void UnregisterCallbacks(IPlayerActions instance)
@@ -308,6 +334,9 @@ namespace FeatheredFugitive
                 @MovePlayer.started -= instance.OnMovePlayer;
                 @MovePlayer.performed -= instance.OnMovePlayer;
                 @MovePlayer.canceled -= instance.OnMovePlayer;
+                @OpenInventory.started -= instance.OnOpenInventory;
+                @OpenInventory.performed -= instance.OnOpenInventory;
+                @OpenInventory.canceled -= instance.OnOpenInventory;
             }
 
             public void RemoveCallbacks(IPlayerActions instance)
@@ -375,6 +404,7 @@ namespace FeatheredFugitive
             void OnMoveCamera(InputAction.CallbackContext context);
             void OnJump(InputAction.CallbackContext context);
             void OnMovePlayer(InputAction.CallbackContext context);
+            void OnOpenInventory(InputAction.CallbackContext context);
         }
     }
 }
