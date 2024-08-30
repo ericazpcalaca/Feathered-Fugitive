@@ -57,7 +57,8 @@ namespace FeatheredFugitive
                 GameObject tokenGameObject = other.gameObject;
                 var token = tokenGameObject.GetComponent<Token>();
                 TokenManager.Instance.ReturnToPool(token);
-
+                InventoryManager.Instance.AddItem("Moedinha", 1);
+                InventoryManager.Instance.DisplayInventory();
                 if (_debugEnabled)
                     Debug.Log("Player Score: " + _playerTokenScore);
             }
@@ -79,7 +80,6 @@ namespace FeatheredFugitive
                     Debug.Log("Player Height: " + playerHeight);
                     Debug.Log("Enemy Top Height: " + enemyTopHeight);
                 }
-
 
                 if (playerHeight > enemyTopHeight )
                 {
@@ -105,8 +105,8 @@ namespace FeatheredFugitive
         {
             if (value > 0 && _groundedPlayer)
             {
-
                 _playerVelocity.y += Mathf.Sqrt(_jumpHeight * -2f * _gravityValue);
+                
                 if (_debugEnabled)
                     Debug.Log("Player Height jump: " + transform.position.y);
             }
