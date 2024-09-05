@@ -8,12 +8,10 @@ using static FeatheredFugitive.Input;
 namespace FeatheredFugitive
 {
     public class PlayerInput : MonoBehaviour, IPlayerActions
-
     {
         public Action<Vector2> OnPlayerMoveCamera;
         public Action<Vector2> OnPlayerMove;
         public Action<float> OnPlayerJump;
-        public Action OpenInventory;
 
         private Input _input;
         private bool _isPaused;
@@ -53,9 +51,24 @@ namespace FeatheredFugitive
 
         public void OnOpenInventory(InputAction.CallbackContext context)
         {
-            _isPaused = true;
-            OpenInventory?.Invoke();
-            ShowMouse(true);
+            if (context.performed)
+            {
+                _isPaused = true;
+                Time.timeScale = 0.0f;  
+                ShowMouse(true);
+                GameStateManager.Instance.IsOpenInventory(true);
+            }
+        }
+
+        public void OnPause(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+            {
+                _isPaused = true;
+                Time.timeScale = 0.0f;
+                ShowMouse(true);
+                GameStateManager.Instance.IsGamePaused(true);
+            }
         }
 
         public void ShowMouse(bool show)
@@ -67,6 +80,8 @@ namespace FeatheredFugitive
         public void ResumeGame()
         {
             _isPaused = false;
+            Time.timeScale = 1.0f;  
+            ShowMouse(false);
         }
     }
 }

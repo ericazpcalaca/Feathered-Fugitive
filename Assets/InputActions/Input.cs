@@ -64,6 +64,15 @@ namespace FeatheredFugitive
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Pause"",
+                    ""type"": ""Button"",
+                    ""id"": ""1492ddf4-c6cf-4542-96f6-3d6f3153d69d"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -154,6 +163,17 @@ namespace FeatheredFugitive
                     ""action"": ""OpenInventory"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""0a814639-21da-4084-8bb9-b0434850b98a"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -227,6 +247,7 @@ namespace FeatheredFugitive
             m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
             m_Player_MovePlayer = m_Player.FindAction("MovePlayer", throwIfNotFound: true);
             m_Player_OpenInventory = m_Player.FindAction("OpenInventory", throwIfNotFound: true);
+            m_Player_Pause = m_Player.FindAction("Pause", throwIfNotFound: true);
         }
 
         public void Dispose()
@@ -292,6 +313,7 @@ namespace FeatheredFugitive
         private readonly InputAction m_Player_Jump;
         private readonly InputAction m_Player_MovePlayer;
         private readonly InputAction m_Player_OpenInventory;
+        private readonly InputAction m_Player_Pause;
         public struct PlayerActions
         {
             private @Input m_Wrapper;
@@ -300,6 +322,7 @@ namespace FeatheredFugitive
             public InputAction @Jump => m_Wrapper.m_Player_Jump;
             public InputAction @MovePlayer => m_Wrapper.m_Player_MovePlayer;
             public InputAction @OpenInventory => m_Wrapper.m_Player_OpenInventory;
+            public InputAction @Pause => m_Wrapper.m_Player_Pause;
             public InputActionMap Get() { return m_Wrapper.m_Player; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -321,6 +344,9 @@ namespace FeatheredFugitive
                 @OpenInventory.started += instance.OnOpenInventory;
                 @OpenInventory.performed += instance.OnOpenInventory;
                 @OpenInventory.canceled += instance.OnOpenInventory;
+                @Pause.started += instance.OnPause;
+                @Pause.performed += instance.OnPause;
+                @Pause.canceled += instance.OnPause;
             }
 
             private void UnregisterCallbacks(IPlayerActions instance)
@@ -337,6 +363,9 @@ namespace FeatheredFugitive
                 @OpenInventory.started -= instance.OnOpenInventory;
                 @OpenInventory.performed -= instance.OnOpenInventory;
                 @OpenInventory.canceled -= instance.OnOpenInventory;
+                @Pause.started -= instance.OnPause;
+                @Pause.performed -= instance.OnPause;
+                @Pause.canceled -= instance.OnPause;
             }
 
             public void RemoveCallbacks(IPlayerActions instance)
@@ -405,6 +434,7 @@ namespace FeatheredFugitive
             void OnJump(InputAction.CallbackContext context);
             void OnMovePlayer(InputAction.CallbackContext context);
             void OnOpenInventory(InputAction.CallbackContext context);
+            void OnPause(InputAction.CallbackContext context);
         }
     }
 }

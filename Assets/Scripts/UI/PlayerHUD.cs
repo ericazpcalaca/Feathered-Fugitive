@@ -1,10 +1,5 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.UI;
 
 namespace FeatheredFugitive
 {
@@ -13,26 +8,31 @@ namespace FeatheredFugitive
     {
         [SerializeField] private TextMeshProUGUI _scoreText;
         [SerializeField] private GameObject _inventoryScreen;
-
-        private PlayerInput _playerInput;
+        [SerializeField] private GameObject _pauseScreen;
 
         private void Start()
         {
-            _playerInput = GetComponent<PlayerInput>();
             _inventoryScreen.SetActive(false);
+            _pauseScreen.SetActive(false);
 
-            _playerInput.OpenInventory += HandleInventory;
+            GameStateManager.Instance.IsOpenInventory += HandleInventory;
+            GameStateManager.Instance.IsGamePaused += HandleGamePaused;
         }
 
         private void OnDestroy()
         {
-            _playerInput.OpenInventory -= HandleInventory;
+            GameStateManager.Instance.IsOpenInventory -= HandleInventory;
+            GameStateManager.Instance.IsGamePaused += HandleGamePaused;
         }
-       
-        private void HandleInventory()
+
+        private void HandleInventory(bool isOpen)
         {
-            _inventoryScreen.SetActive(true);
+            _inventoryScreen.SetActive(isOpen);
         }
-     
+
+        private void HandleGamePaused(bool isPaused)
+        {
+            _pauseScreen.SetActive(isPaused);
+        }
     }
 }

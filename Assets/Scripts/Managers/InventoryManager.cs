@@ -18,7 +18,7 @@ namespace FeatheredFugitive
         {
             string json = JsonUtility.ToJson(_inventory);
             File.WriteAllText(_filePath, json);
-            Debug.Log("Inventory saved to " + _filePath);
+            //Debug.Log("Inventory saved to " + _filePath);
         }
 
         public void LoadInventory()
@@ -27,11 +27,11 @@ namespace FeatheredFugitive
             {
                 string json = File.ReadAllText(_filePath);
                 _inventory = JsonUtility.FromJson<Inventory>(json);
-                Debug.Log("Inventory loaded from " + _filePath);
+                //Debug.Log("Inventory loaded from " + _filePath);
             }
             else
             {
-                Debug.Log("No inventory file found, creating a new one.");
+                //Debug.Log("No inventory file found, creating a new one.");
                 _inventory = new Inventory();
             }
         }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -31,12 +32,18 @@ namespace FeatheredFugitive
 
             _playerInput.OnPlayerMove += OnPlayerMove;
             _playerInput.OnPlayerJump += OnPlayerJump;
+
+            GameStateManager.Instance.IsOpenInventory += HandleInventory;
+            GameStateManager.Instance.IsGamePaused += HandleGamePaused;
         }
 
         private void OnDestroy()
         {
             _playerInput.OnPlayerMove -= OnPlayerMove;
             _playerInput.OnPlayerJump -= OnPlayerJump;
+
+            GameStateManager.Instance.IsOpenInventory -= HandleInventory;
+            GameStateManager.Instance.IsGamePaused -= HandleGamePaused;
         }
 
         private void Update()
@@ -141,6 +148,22 @@ namespace FeatheredFugitive
             float newYVelocity = _playerVelocity.y + (_gravityValue * fallMultiplier * Time.deltaTime);
             _playerVelocity.y = newYVelocity;
             _controller.Move(_playerVelocity * Time.deltaTime);
+        }
+
+        private void HandleInventory(bool isOpen)
+        {
+            if (!isOpen)
+            {
+                _playerInput.ResumeGame();
+            }
+        }
+
+        private void HandleGamePaused(bool isPaused)
+        {
+            if (!isPaused)
+            {
+                _playerInput.ResumeGame();
+            }
         }
     }
 }
