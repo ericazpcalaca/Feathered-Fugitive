@@ -21,14 +21,19 @@ namespace FeatheredFugitive
         private Vector3 _playerVelocity;
         private Vector2 _moveInput;
         private bool _groundedPlayer;
+
         private uint _playerTokenScore;
+        private uint _playerLife;
+        public Action<uint> UpdateScore;
+        public Action<uint> UpdateLife;
 
         private void Awake()
         {
             _controller = gameObject.GetComponent<CharacterController>();
             _playerInput = GetComponent<PlayerInput>();
             _cameraMainTransform = Camera.main.transform;
-            _playerTokenScore = 0;
+
+            SetUpPlayer();
 
             _playerInput.OnPlayerMove += OnPlayerMove;
             _playerInput.OnPlayerJump += OnPlayerJump;
@@ -59,6 +64,8 @@ namespace FeatheredFugitive
             if (other.transform.tag == "Token")
             {
                 _playerTokenScore++;
+                UpdateScore?.Invoke(_playerTokenScore);
+
                 GameObject tokenGameObject = other.gameObject;
                 var token = tokenGameObject.GetComponent<Token>();
                 
@@ -75,35 +82,46 @@ namespace FeatheredFugitive
             /* 
             * In colision with the enemy, check if you were able to detroy it
             */
-            if (other.transform.tag == "Enemy")
+            if (other.CompareTag("Enemy"))
             {
                 GameObject enemyGameObject = other.gameObject;
-                var enemy = enemyGameObject.GetComponent<Enemy>();
-
-                // Check if the player collided with the top of the enemy
-                float playerHeight = transform.position.y;
                 float enemyTopHeight = other.bounds.max.y;
+
+                RaycastHit hit;
+                float playerFeetHeight = transform.position.y;
+                if (Physics.Raycast(transform.position, Vector3.down, out hit, Mathf.Infinity))
+                {
+                    playerFeetHeight = hit.point.y;  // Get the Y position where the ray hits
+                }
 
                 if (_debugEnabled)
                 {
-                    Debug.Log("Player Height: " + playerHeight);
+                    Debug.Log("Player Feet Height: " + playerFeetHeight);
                     Debug.Log("Enemy Top Height: " + enemyTopHeight);
                 }
 
-                if (playerHeight > enemyTopHeight )
+                if (playerFeetHeight > enemyTopHeight)
                 {
-                    // Player collided with the top of the enemy
                     Destroy(enemyGameObject);
                     if (_debugEnabled)
                         Debug.Log("Destroyed");
                 }
                 else
                 {
-                    // Player did not collide with the top of the enemy
+                    //_playerLife--;
+                    //UpdateLife?.Invoke(_playerLife);
                     if (_debugEnabled)
                         Debug.Log("Less one life");
                 }
             }
+        }
+
+        private void SetUpPlayer()
+        {
+            _playerTokenScore = 0;
+            _playerLife = 3;
+            UpdateScore?.Invoke(_playerTokenScore);
+            UpdateLife?.Invoke(_playerLife);
         }
 
         private void OnPlayerMove(Vector2 vector)
