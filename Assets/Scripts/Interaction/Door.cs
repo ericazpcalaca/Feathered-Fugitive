@@ -11,15 +11,18 @@ namespace FeatheredFugitive
 
         public bool Interact(PlayerInteractor interactor)
         {
-            if (InventoryManager.Instance.CheckItem("Chave1"))
-            {
-                Debug.Log("Opening door");
-                InventoryManager.Instance.RemoveItem("Chave1",1);
-                return true;
-            }
+            //if (InventoryManager.Instance.CheckItem("Chave1"))
+            //{
+            //    Debug.Log("Opening door");
+            //    InventoryManager.Instance.RemoveItem("Chave1",1);
+            //    return true;
+            //}
 
-            Debug.Log("Door locked");
-            return false;
+            //Debug.Log("Door locked");
+            //return false;
+
+            Debug.Log("Opening door");
+            return true;
         }
     }
 }
