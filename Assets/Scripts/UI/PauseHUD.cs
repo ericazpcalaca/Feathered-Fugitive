@@ -9,6 +9,7 @@ namespace FeatheredFugitive
         [SerializeField] private Button _btnReturnGame;
         [SerializeField] private Button _btnQuit;
         [SerializeField] private GameObject _pauseScreen;
+
         void Start()
         {
             _btnCloseScreen.onClick.AddListener(OnExitClick);

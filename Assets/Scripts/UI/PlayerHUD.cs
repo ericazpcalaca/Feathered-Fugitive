@@ -12,6 +12,7 @@ namespace FeatheredFugitive
         [SerializeField] private TextMeshProUGUI _lifeText;
         [SerializeField] private GameObject _inventoryScreen;
         [SerializeField] private GameObject _pauseScreen;
+        [SerializeField] private GameObject _interactionScreen;
 
         PlayerController _playerController;
 
@@ -24,6 +25,8 @@ namespace FeatheredFugitive
 
             _inventoryScreen.SetActive(false);
             _pauseScreen.SetActive(false);
+            _interactionScreen.SetActive(false);
+
             GameStateManager.Instance.IsOpenInventory += HandleInventory;
             GameStateManager.Instance.IsGamePaused += HandleGamePaused;
         }        

@@ -55,5 +55,12 @@ namespace FeatheredFugitive
                 Debug.Log($"Item: {item._itemName}, Quantity: {item._quantity}");
             }
         }
+
+        public bool CheckItem(string itemName)
+        {
+            InventoryItem item = _inventory._items.Find(i => i._itemName == itemName);
+
+            return item != null;
+        }
     }
 }
