@@ -1,7 +1,9 @@
+using Cinemachine;
 using System;
 using System.Collections;
 using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
+using UnityEngine.Animations;
 using UnityEngine.InputSystem;
 
 namespace FeatheredFugitive
@@ -14,6 +16,10 @@ namespace FeatheredFugitive
         [SerializeField] private float _rotationSpeed = 1f;
         [SerializeField] private float _playerSpeed = 2f;
         [SerializeField] private bool _debugEnabled;
+
+        [SerializeField] private CinemachineFreeLook _cinemachineCamera;
+        [SerializeField] private float _cameraDisableDuration = 0.3f; 
+
 
         private CharacterController _controller;
         private Transform _cameraMainTransform;
@@ -32,6 +38,7 @@ namespace FeatheredFugitive
             _controller = gameObject.GetComponent<CharacterController>();
             _playerInput = GetComponent<PlayerInput>();
             _cameraMainTransform = Camera.main.transform;
+            
 
             SetUpPlayer();
 
@@ -182,6 +189,26 @@ namespace FeatheredFugitive
             {
                 _playerInput.ResumeGame();
             }
+        }
+
+        public void Teleport(Vector3 position, Quaternion rotation)
+        {
+            _cinemachineCamera.enabled = false;
+
+            transform.position = position;
+            transform.rotation = rotation;
+            Physics.SyncTransforms();
+
+            // Reset velocity after teleportation
+            _playerVelocity = Vector3.zero;
+
+            StartCoroutine(ReEnableCameraAfterTeleport());
+        }
+
+        private IEnumerator ReEnableCameraAfterTeleport()
+        {
+            yield return new WaitForSeconds(_cameraDisableDuration);
+            _cinemachineCamera.enabled = true;
         }
     }
 }
