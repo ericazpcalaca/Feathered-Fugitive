@@ -15,7 +15,7 @@ namespace FeatheredFugitive
         private void OnExitClick()
         {
             _inventoryScreen.SetActive(false);
-            GameStateManager.Instance.IsOpenInventory(false);
+            GameStateManager.Instance.IsOpenInventory(false);            
         }
     }
 }

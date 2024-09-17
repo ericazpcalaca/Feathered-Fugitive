@@ -198,8 +198,6 @@ namespace FeatheredFugitive
             transform.position = position;
             transform.rotation = rotation;
             Physics.SyncTransforms();
-
-            // Reset velocity after teleportation
             _playerVelocity = Vector3.zero;
 
             StartCoroutine(ReEnableCameraAfterTeleport());

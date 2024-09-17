@@ -22,6 +22,7 @@ namespace FeatheredFugitive
         {
             IsOpenInventory?.Invoke(isOpen);
             HasInventoryOpen = isOpen;
+            InventoryManager.Instance.DisplayInventoryOnUI();
         }
     }
 }
